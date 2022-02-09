@@ -1,0 +1,79 @@
+---
+#  https://golangci-lint.run/usage/linters/
+run:
+  deadline: 5m
+  tests: false
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - goimports
+    - revive
+    - misspell
+    # - prealloc
+    - gosec
+    - noctx
+    - nolintlint
+    - unparam
+    - cyclop
+    - lll
+    - nestif
+    - unconvert
+    - asciicheck
+    - bodyclose
+    - durationcheck
+    - errorlint
+    - exportloopref
+    # - forcetypeassert
+    - gochecknoglobals
+    - gocognit
+    # - goconst
+    - gocritic
+    - goerr113
+    # - gomnd
+    # - ifshort
+    - makezero
+    - nilerr
+    # - nlreturn
+    - noctx
+    - nolintlint
+    - predeclared
+    - thelper
+    - wastedassign
+    - whitespace
+    # - wrapcheck
+    # - wsl
+    - gochecknoinits
+    - bidichk
+    - contextcheck
+    - errname
+    #- ireturn
+    - nilnil
+
+    - rowserrcheck
+    - sqlclosecheck
+
+
+linters-settings:
+  cyclop:
+    max-complexity: 15
+  gocognit:
+    min-complexity: 20
+  revive:
+    rules:
+      - name: errorf
+        disabled: true
