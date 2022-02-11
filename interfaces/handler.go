@@ -41,11 +41,7 @@ func (h *handler) Root(c echo.Context) error {
 }
 
 func (h *handler) NoCache(c echo.Context) error {
-	cookie, err := c.Cookie(CookieCount)
-	if err != nil {
-		return internalServerError(c, err)
-	}
-	return c.String(http.StatusOK, "No cache: "+cookie.Value)
+	return responseWithHeaders(c, "no-cache")
 }
 
 func (h *handler) PNG(c echo.Context) error {
@@ -57,6 +53,23 @@ func (h *handler) PNG(c echo.Context) error {
 	if err != nil {
 		return internalServerError(c, err)
 	}
+	return c.Blob(http.StatusOK, "image/png", data)
+}
+
+func responseWithHeaders(c echo.Context, cacheControl string) error {
+	cookie, err := c.Cookie(CookieCount)
+	if err != nil {
+		return internalServerError(c, err)
+	}
+	num, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		return internalServerError(c, err)
+	}
+	data, err := images.PNG(num)
+	if err != nil {
+		return internalServerError(c, err)
+	}
+	c.Response().Header().Set("Cache-Control", cacheControl)
 	return c.Blob(http.StatusOK, "image/png", data)
 }
 
