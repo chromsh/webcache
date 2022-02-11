@@ -11,6 +11,8 @@ func main() {
 	h := interfaces.NewHandler()
 
 	e.GET("/", h.Root)
+	e.GET("/no-cache", h.NoCache)
+	e.GET("/png", h.PNG)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
