@@ -9,9 +9,43 @@
 </head>
 
 <body>
-    test test test
-    <img src="/no-cache.png">
+    <div>
+        <a href="https://developer.mozilla.org/ja/docs/Web/HTTP/Caching">MDN: Cache</a><br>
+        <a href="https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/Cache-Control#browser_compatibility">MDN: Cache-Control</a>
+    </div>
 
+    <div>
+        <a href=".">transition</a>
+        <a href="javascript:clearCache()">clear cookie</a>
+    </div>
+    <hr>
+    <div id="list">
+    </div>
+
+    <script>
+        const list = [
+            "no-cache",
+            "no-store",
+            "public, max-age=10",
+            "must-revalidate",
+            "must-revalidate, max-age=10",
+            "immutable",
+            "immutable, max-age=10",
+        ];
+        list.forEach(function(item) {
+            const div = document.createElement("div");
+            div.innerHTML = item;
+            div.appendChild(document.createElement("br"));
+            const img = document.createElement("img");
+            img.src = "/cache.png?cache=" + item;
+            div.appendChild(img);
+            document.getElementById("list").appendChild(div);
+        });
+
+        function clearCache() {
+            document.cookie = "count=0; path=/;";
+        }
+    </script>
 </body>
 
 </html>

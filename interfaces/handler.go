@@ -11,7 +11,7 @@ import (
 
 type Handler interface {
 	Root(c echo.Context) error
-	NoCache(c echo.Context) error
+	WithCacheHeader(c echo.Context) error
 	PNG(c echo.Context) error
 }
 type handler struct{}
@@ -30,6 +30,7 @@ func (h *handler) Root(c echo.Context) error {
 		cookie = new(http.Cookie)
 		cookie.Name = "count"
 		cookie.Value = "0"
+		cookie.HttpOnly = false
 	}
 	count, err := strconv.Atoi(cookie.Value)
 	if err != nil {
@@ -40,8 +41,18 @@ func (h *handler) Root(c echo.Context) error {
 	return c.File(path.Join("static", "html", "root.html"))
 }
 
-func (h *handler) NoCache(c echo.Context) error {
-	return responseWithHeaders(c, "no-cache")
+func (h *handler) WithCacheHeader(c echo.Context) error {
+	ifNoneMatch := c.Request().Header.Get("If-None-Match")
+	c.Response().Header().Set("Vary", "Accept-Encoding")
+
+	cacheHeader := c.QueryParam("cache")
+	c.Response().Header().Set("Cache-Control", cacheHeader)
+	if ifNoneMatch != "" {
+		c.Response().Header().Set("ETag", ifNoneMatch)
+		return c.NoContent(http.StatusNotModified)
+	}
+
+	return responseWithHeaders(c, cacheHeader)
 }
 
 func (h *handler) PNG(c echo.Context) error {
@@ -69,7 +80,7 @@ func responseWithHeaders(c echo.Context, cacheControl string) error {
 	if err != nil {
 		return internalServerError(c, err)
 	}
-	c.Response().Header().Set("Cache-Control", cacheControl)
+	c.Response().Header().Set("ETag", strconv.Itoa(num))
 	return c.Blob(http.StatusOK, "image/png", data)
 }
 
